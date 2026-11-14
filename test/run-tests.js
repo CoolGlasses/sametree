@@ -156,6 +156,27 @@ test('canceller: a requested run on an already-green tree is cancelled; a fresh 
   }
 });
 
+check('store: two processes sharing one file lose no writes (the audit-clobber bug)', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sametree-store-'));
+  const file = path.join(dir, 'store.json');
+  const serverSide = new Store(file);   // constructed first, holds stale memory
+  const auditSide = new Store(file);
+  // Audit writes its aggregate AFTER the server was already running...
+  auditSide.setDailyAudit(42, '2026-11-13', { billedMinutes: 99 });
+  // ...then the server records a passed tree from its stale in-memory copy.
+  serverSide.recordPassed(42, 7, 'TREE-T', { runId: 1, runUrl: 'u', headSha: 's', completedAt: 'now' });
+  // A fresh reader must see BOTH writes.
+  const fresh = new Store(file);
+  assert.strictEqual(fresh.getDailyAudit(42, '2026-11-13').billedMinutes, 99);
+  assert.strictEqual(fresh.getPassed(42, 7, 'TREE-T').runId, 1);
+  // And in the other order: server first, audit second.
+  serverSide.recordCancellation({ repoId: 42, runId: 2, treeSha: 'TREE-T', at: 'now' });
+  auditSide.setDailyAudit(42, '2026-11-14', { billedMinutes: 5 });
+  const fresh2 = new Store(file);
+  assert.strictEqual(fresh2.data.cancellations.length, 1);
+  assert.strictEqual(fresh2.getDailyAudit(42, '2026-11-14').billedMinutes, 5);
+});
+
 test('server: bad signature is rejected 401', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sametree-'));
   const store = new Store(path.join(dir, 'store.json'));
