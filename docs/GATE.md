@@ -18,13 +18,3 @@ The team hand-built the measurement with `gh` scripts against the jobs/billing A
 
 ---
 
-### 2. Bot-PR Backlog Janitor (26/30)
-
-*Acts on the Dependabot/Renovate queue instead of just charting it: assigns an owner (CODEOWNERS), labels superseded/failing/aging PRs, snoozes, escalates — one digest per repo.*
-
-**1. Pain + payer.** Platform/eng teams at orgs running dependency bots across tens-to-hundreds of repos. **Coordinator-verified firsthand** — Keypup's analysis of one ~1,400-engineer org's real PR data, Nov 2025–Oct 2026 (https://www.keypup.io/blog/dependency-bot-backlog-dependabot-renovate-pull-requests/): bots opened **31% of all PRs (18,420 of 59,400)**; only **44% merged**; **4,180 bot PRs open today, median age 61 business days**; major bumps **11% merged**; **"85% of open bot pull requests have no engineer named as the next actor."** Filippo Valsorda, "Turn Dependabot Off" (**also opened by coordinator** — https://words.filippo.io/dependabot/): "Dependabot is a noise machine." / "Yesterday, Dependabot opened thousands of PRs against unaffected repositories…" / "False positive alerts are not only a waste of time, they also reduce security by causing alert fatigue and making proper triage impractical." Caveat: Keypup's engineering-leader quotes are presented by Keypup as representative of recurring Reddit threads, not individually sourced — the hard numbers are the load-bearing evidence. Honest gap in Pays: teams provably pay Keypup to *measure* this; nobody in the evidence yet pays for the *cleanup actions*. That is the wedge and the risk in one sentence.
-
-**2. Price point.** Keypup Full Platform $99/mo minimum (pricing page opened), analytics only — measures, does not assign/close/escalate. Renovate core is free/self-hostable (the pricing pressure). **Proposed: $29/mo per org (≤25 repos), $49/mo (≤100 repos)** — under Keypup's floor, charging for actions Keypup doesn't take.
-
-**3. Money rail.** GitHub Marketplace App — RAIL VERIFIED firsthand. Same 100-install free funnel.
-
